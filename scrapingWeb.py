@@ -49,8 +49,6 @@ if response.status_code == 200:
                         elif cycle.lower() == "turno 4" or cycle.lower() == "turno cuatro":
                             print("🔹 Es Turno 4")
                             strMenssage = "HOY Corte de Agua!"
-                        else: 
-                            strMenssage = cycle
 
                         # Solo enviar mensaje si hay contenido en strMenssage
                         if strMenssage:
