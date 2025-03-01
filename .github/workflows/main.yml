@@ -2,7 +2,7 @@ name: Ejecutar Script de Racionamiento
 
 on:
   schedule:
-    - cron: '35 6 * * *'
+    - cron: '40 18 * * *'
   workflow_dispatch:
     
 jobs:
