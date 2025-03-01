@@ -38,17 +38,19 @@ if response.status_code == 200:
                     if "Racionamiento" in textTitle:
                         match = re.search(r"¡(.*?)!", textTitle)
                         cycle = match.group(1) if match else "No encontrado"
-                        
+
                         print(f"Ciclo encontrado: {cycle}")
 
                         strMenssage = ""
                         
-                        if cycle.lower() == "turno 3":
+                        if cycle.lower() == "turno 3" or cycle.lower() == "turno tres":
                             print("🔹 Es Turno 3")
                             strMenssage = "Mañana Corte de Agua!"
-                        elif cycle.lower() == "turno 4":
+                        elif cycle.lower() == "turno 4" or cycle.lower() == "turno cuatro":
                             print("🔹 Es Turno 4")
                             strMenssage = "HOY Corte de Agua!"
+                        else: 
+                            strMenssage = cycle
 
                         # Solo enviar mensaje si hay contenido en strMenssage
                         if strMenssage:
