@@ -1,8 +1,9 @@
 name: Ejecutar Script de Racionamiento
 
 on:
-  workflow_dispatch:    #- cron: '0 13 * * *'  # Ejecuta a las 8:00 AM (hora Colombia UTC-5)
-
+  schedule:
+    - cron: "10 18 * * *"
+    
 jobs:
   run-script:
     runs-on: ubuntu-latest
