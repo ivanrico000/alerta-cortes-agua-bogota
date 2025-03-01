@@ -1,0 +1,24 @@
+name: Ejecutar Script de Racionamiento
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # Ejecuta a las 8:00 AM (hora Colombia UTC-5)
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: pip install requests beautifulsoup4
+
+      - name: Ejecutar script
+        run: python scrapingWeb.py
