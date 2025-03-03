@@ -39,6 +39,21 @@ async def read_users(authUser : AuthUser):
     connection.close()
     return users
 
+@app.post("/cycles/max-date")
+async def get_max_date(authUser: AuthUser):
+    if not verify_user(authUser):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    connection = get_database_connection()
+    cursor = connection.cursor()
+    
+    query = "SELECT date, cycle FROM cycles_calendar WHERE date = (SELECT MAX(date) FROM cycles_calendar)"
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    connection.close()
+    return result
+
 def verify_user(authUser : AuthUser):
     connection = get_database_connection()
     cursor = connection.cursor()
