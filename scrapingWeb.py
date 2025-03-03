@@ -35,7 +35,7 @@ if response.status_code == 200:
                     textTitle = title.get_text(strip=True)
                     print(f"textTitle: {textTitle}")
 
-                    if "Racionamiento" in textTitle:
+                    if "racionamiento" in textTitle.lower():
                         match = re.search(r"¡(.*?)!", textTitle)
                         cycle = match.group(1) if match else "No encontrado"
 
