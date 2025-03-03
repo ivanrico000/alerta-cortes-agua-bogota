@@ -15,6 +15,14 @@ class AuthUser(BaseModel):
     user: str
     passw: str
 
+class Cycle(BaseModel):
+    date: str
+    cycle: int
+
+class InsertCyclesRequest(BaseModel):
+    authUser: AuthUser
+    cycles: List[Cycle]
+
 @app.post("/register-user")
 async def create_user(user : User):
     connection = get_database_connection()
