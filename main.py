@@ -54,6 +54,30 @@ async def get_max_date(authUser: AuthUser):
     connection.close()
     return result
 
+@app.post("/cycles/insert")
+async def insert_cycles(request: InsertCyclesRequest):
+    if not verify_user(request.authUser):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if not request.cycles:
+        raise HTTPException(status_code=400, detail="No se recibió información para insertar.")
+    
+    connection = get_database_connection()
+    cursor = connection.cursor()
+    
+    delete_query = "DELETE FROM cycles_calendar"
+    cursor.execute(delete_query)
+    
+    insert_query = "INSERT INTO cycles_calendar (date, cycle) VALUES (%s, %s)"
+    data_to_insert = [(cycle.date, cycle.cycle) for cycle in request.cycles]
+    
+    cursor.executemany(insert_query, data_to_insert)
+    
+    connection.commit()
+    connection.close()
+    
+    return {"message": "Datos insertados correctamente.", "filas_insertadas": len(request.cycles)}
+
 def verify_user(authUser : AuthUser):
     connection = get_database_connection()
     cursor = connection.cursor()
