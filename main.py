@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List
 from database import get_database_connection
+import bcrypt
 
 app = FastAPI()
 
@@ -9,6 +10,10 @@ class User(BaseModel):
     phone: str
     apiKey: str
     cycle: int
+
+class AuthUser(BaseModel):
+    user: str
+    passw: str
 
 @app.post("/register-user")
 async def create_user(user : User):
@@ -21,8 +26,11 @@ async def create_user(user : User):
     connection.close()
     return {"message": "User created!"}
 
-@app.get("/users")
-async def read_users():
+@app.post("/users")
+async def read_users(authUser : AuthUser):
+    if not verify_user(authUser):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
     connection = get_database_connection()
     cursor = connection.cursor()
     query = "SELECT * FROM whatsapp_users"
@@ -30,3 +38,19 @@ async def read_users():
     users = cursor.fetchall()
     connection.close()
     return users
+
+def verify_user(authUser : AuthUser):
+    connection = get_database_connection()
+    cursor = connection.cursor()
+    
+    query = "SELECT password FROM authusers WHERE username = %s"
+    cursor.execute(query, (authUser.user,))
+    result = cursor.fetchone()
+    
+    connection.close()
+    
+    if result is None:
+        return False
+    
+    hashed_password = result[0]
+    return bcrypt.checkpw(authUser.passw.encode(), hashed_password.encode())
