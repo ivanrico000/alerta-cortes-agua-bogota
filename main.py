@@ -47,7 +47,7 @@ async def get_max_date(authUser: AuthUser):
     connection = get_database_connection()
     cursor = connection.cursor()
     
-    query = "SELECT date, cycle FROM cycles_calendar WHERE date = (SELECT MAX(date) FROM cycles_calendar)"
+    query = "SELECT date, cycle FROM cycles_calendar ORDER BY TO_DATE(date, 'DD/MM') DESC LIMIT 1"
     cursor.execute(query)
     result = cursor.fetchall()
 
