@@ -45,8 +45,8 @@ async def read_users(request : InsertCycleRequest):
 
     connection = get_database_connection()
     cursor = connection.cursor()
-    query = "SELECT * FROM whatsapp_users WHERE cycle = (%s)"
-    cursor.execute(query, (str(request.cycle.cycle),))
+    query = "SELECT * FROM whatsapp_users WHERE cycle = (%s) OR cycle = (%s)"
+    cursor.execute(query, (int(request.cycle.cycle), (int(request.cycle.cycle) + 1)))
     users = cursor.fetchall()
     connection.close()
     return users
