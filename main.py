@@ -39,14 +39,14 @@ async def create_user(user : User):
     return {"message": "User created!"}
 
 @app.post("/users")
-async def read_users(authUser : AuthUser):
-    if not verify_user(authUser):
+async def read_users(request : InsertCycleRequest):
+    if not verify_user(request.authUser):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     connection = get_database_connection()
     cursor = connection.cursor()
-    query = "SELECT * FROM whatsapp_users"
-    cursor.execute(query)
+    query = "SELECT * FROM whatsapp_users WHERE cycle = (%s)"
+    cursor.execute(query, (str(request.cycle.cycle),))
     users = cursor.fetchall()
     connection.close()
     return users
