@@ -43,10 +43,12 @@ async def read_users(request : InsertCycleRequest):
     if not verify_user(request.authUser):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
+    cycle_value = int(request.cycle.cycle)
+
     connection = get_database_connection()
     cursor = connection.cursor()
-    query = "SELECT * FROM whatsapp_users WHERE cycle = (%s) OR cycle = (%s)"
-    cursor.execute(query, (int(request.cycle.cycle), (int(request.cycle.cycle) + 1)))
+    query = "SELECT * FROM whatsapp_users WHERE cycle = (%s) OR cycle = (CASE WHEN (%s) = 9 THEN 1 ELSE (%s) + 1 end)"
+    cursor.execute(query, (cycle_value, cycle_value, cycle_value))
     users = cursor.fetchall()
     connection.close()
     return users
