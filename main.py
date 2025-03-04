@@ -23,6 +23,10 @@ class InsertCyclesRequest(BaseModel):
     authUser: AuthUser
     cycles: List[Cycle]
 
+class InsertCycleRequest(BaseModel):
+    authUser: AuthUser
+    cycle: Cycle
+
 @app.post("/register-user")
 async def create_user(user : User):
     connection = get_database_connection()
@@ -85,6 +89,28 @@ async def insert_cycles(request: InsertCyclesRequest):
     connection.close()
     
     return {"message": "Datos insertados correctamente.", "filas_insertadas": len(request.cycles)}
+
+@app.post("/cycles/shearch")
+async def shearchCycles(request: InsertCycleRequest):
+    if not verify_user(request.authUser):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if not request.cycle:
+        raise HTTPException(status_code=400, detail="No se recibió información para insertar.")
+    
+    connection = get_database_connection()
+    cursor = connection.cursor()
+    
+    shearch_query = "SELECT date, cycle FROM cycles_calendar WHERE date = (%s)"
+    data_to_shearch = (str(request.cycle.date),)
+    print(f"Valor recibido en FastAPI: *{request.cycle.date}*")  # Verifica el dato exacto
+
+    cursor.execute(shearch_query, data_to_shearch)
+    
+    result = cursor.fetchone()
+    
+    connection.close()
+    return result
 
 def verify_user(authUser : AuthUser):
     connection = get_database_connection()
